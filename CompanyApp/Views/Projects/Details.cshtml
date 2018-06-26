@@ -1,0 +1,83 @@
+﻿@model CompanyApp.Models.Project
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Project</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProjectEmployee)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ProjectEmployee)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Employee.Name)
+                    </td>
+                    <td>
+                        @using (@Html.BeginForm("RemoveEmployeeFromProject", "Projects", FormMethod.Post))
+                        {
+                            @Html.Hidden("employeeId", item.Employee.Id);
+                            @Html.Hidden("Id", Model.Id);
+                            <input type="submit" value="Remove" />
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProjectEmployee)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Employee item in ViewBag.otherEmployees)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @using (@Html.BeginForm("AddEmployeeToProject", "Projects", FormMethod.Post)) {
+                            @Html.Hidden("employeeId", item.Id);
+                            @Html.Hidden("Id", Model.Id);
+                            <input type="submit" value="Add" />
+                        }
+                        @*@Html.ActionLink("Add", "AddEmployeeFromProject", new { id = Model.Id, target = item, targetId = item.Id })*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

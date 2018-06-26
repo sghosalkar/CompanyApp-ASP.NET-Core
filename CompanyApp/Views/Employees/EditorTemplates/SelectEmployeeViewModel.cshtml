@@ -1,0 +1,27 @@
+﻿@model CompanyApp.Models.SelectEmployeeViewModel
+
+@{
+    ViewData["Title"] = "SelectEmployeeViewModel";
+}
+
+<tr>
+    <td style="text-align:center">
+        @Html.CheckBoxFor(model => model.IsSelected)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Id)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Name)
+    </td>
+    <td>
+        @*@Html.TextBoxFor(model => model.Point.Value)*@
+        @*@Html.Hidden(nameof(Model.Point.Timestamp), DateTime.Now)
+        @Html.Hidden(nameof(Model.Point.IsAward), false)
+        @Html.Hidden(nameof(Model.Point.Employee.Id), Model.Id)
+        @{ int Admin = ViewBag.Admin; }
+        @Html.Hidden(nameof(Model.Point.ReceivedFrom.Id), Admin)*@
+    </td>
+</tr>
+
+

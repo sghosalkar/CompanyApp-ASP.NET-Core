@@ -1,0 +1,49 @@
+﻿@model CompanyApp.Models.Employee
+
+@{
+    ViewData["Title"] = "Member";
+}
+
+<h2>Member</h2>
+
+<div>
+    <h4>Employee</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Department)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Department.Name)
+        </dd>
+        @*<dt>
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Role.Name)
+        </dd>*@
+    </dl>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Admin" asp-route-id="@Model.Id">Go to Admin Page</a>
+    }
+
+</div>
+<div>
+    <a asp-action="Logout">Logout</a>
+</div>
+

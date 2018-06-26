@@ -1,0 +1,71 @@
+﻿@model CompanyApp.Models.EmployeeSelectionViewModel
+
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h2>Admin</h2>
+
+@using (@Html.BeginForm("SendSelected", "Employees", FormMethod.Post))
+{
+    @*<table class="table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>@Html.DisplayNameFor(model => model.Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Point)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBoxFor(modelItem => item.IsSelected)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(modelItem => item.Point.Value);
+                            @Html.Hidden(nameof(item.Point.Timestamp), DateTime.Now);
+                            @Html.Hidden(nameof(item.Point.IsAward), false);
+                            @{ int AdminId = ViewBag.AdminId; }
+                            @Html.Hidden(nameof(item.Point.ReceivedFrom.Id), AdminId);
+                            @Html.Hidden(nameof(item.Point.Employee.Id), item.Id);
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
+
+    <table class="table">
+        <tr>
+            <th>
+                Select
+            </th>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+        </tr>
+        @Html.EditorFor(model => model.Employees)
+    </table>
+    <hr />
+    <br />
+    @Html.TextBoxFor(model => model.AllocationValue)
+    int Admin = ViewBag.Admin;
+    @Html.Hidden("Admin", Admin)
+    <input type="submit" name="SendSelected" value="Send" />
+    <input type="submit" name="SendAll" value="Send All" />
+}
+
+<div>
+    <a asp-action="Member" asp-route-id="@ViewBag.Id">Back to Profile Page</a>
+</div>
