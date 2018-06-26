@@ -41,7 +41,6 @@ namespace CompanyApp.Controllers
             if (ModelState.IsValid)
             {
                 var result = employeeRepository.GetById(user.Id);
-                log.Debug(result);
                 if (result == null)
                 {
                     TempData["errorMessage"] = "User ID doesn't exist";
@@ -52,12 +51,7 @@ namespace CompanyApp.Controllers
                     await employeeRepository.SignIn(result);
                     return RedirectToAction(nameof(Member), new { result.Id }); 
                 }
-                log.Debug("Password didn't match");
                 TempData["errorMessage"] = "Incorrect Password";
-            }
-            else
-            {
-                log.Error("Invalid Model state.");
             }
             return RedirectToAction(nameof(Index));
         }
@@ -112,7 +106,8 @@ namespace CompanyApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             Employee employee = employeeRepository.GetById(Id);
-            log.Debug(employeeRepository.GetProjectsById(Id).ToList().Count());
+            employee.EmployeeProject = employeeRepository.GetProjectsById(Id).ToList()
+                .Select(p => new EmployeeProject { Project = p, ProjectId = p.Id, Employee = employee, EmployeeId = employee.Id }).ToList();
             return View(employee);
         }
 
@@ -130,9 +125,7 @@ namespace CompanyApp.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            log.Debug("Logout Action 1");
             await employeeRepository.SignOut();
-            log.Debug("Logout Action 1");
             return RedirectToAction(nameof(Index));
         }
 

@@ -34,7 +34,7 @@ namespace CompanyApp.Repositories
 
         public Employee GetById(int? Id)
         {
-            return context.Employee.Include(e => e.EmployeeProject).Include(e => e.Department).FirstOrDefault(e => e.Id == Id);
+            return context.Employee.Include(e => e.Department).Include(e => e.EmployeeProject).Single(e => e.Id == Id);
         }
 
         public IEnumerable<Employee> GetByDepartmentId(int? Id)
@@ -104,6 +104,8 @@ namespace CompanyApp.Repositories
         {
             return await userManager.FindByNameAsync(name);
         }
+
+        
 
         public async Task SignIn(Employee employee)
         {

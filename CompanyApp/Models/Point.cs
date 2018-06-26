@@ -36,10 +36,5 @@ namespace CompanyApp.Models
         {
             Employees = new List<SelectEmployeeViewModel>();
         }
-        //public IEnumerable<int> getSelectedIds()
-        //{
-        //    // Return an Enumerable containing the Id's of the selected people:
-        //    return (from p in this.People where p.Selected select p.Id).ToList();
-        //}
     }
 }

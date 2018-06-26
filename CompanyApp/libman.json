@@ -1,0 +1,12 @@
+﻿{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "defaultDestination": "wwwroot/lib",
+  "libraries": [
+    {
+      "library": "vue@2.5.16",
+      "files": [ "vue.min.js" ],
+      "destination": "wwwroot/lib/vue"
+    }
+  ]
+}

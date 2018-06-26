@@ -51,8 +51,7 @@ namespace CompanyApp.Data
             modelBuilder.Entity<Point>().HasOne(p => p.Employee).WithMany(e => e.Point);
             modelBuilder.Entity<Point>().HasOne(p => p.ReceivedFrom);
         }
-
-        public DbSet<CompanyApp.Models.SelectEmployeeViewModel> SelectEmployeeViewModel { get; set; }
+        
     }
 
     public class IdentityDbContext : IdentityDbContext<IdentityUser>
