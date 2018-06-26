@@ -6,7 +6,7 @@
 
 <h2>Admin</h2>
 
-@using (@Html.BeginForm("SendSelected", "Employees", FormMethod.Post))
+@using (@Html.BeginForm("SendSelected", "Admins", FormMethod.Post))
 {
     @*<table class="table">
             <thead>
@@ -60,8 +60,8 @@
     <hr />
     <br />
     @Html.TextBoxFor(model => model.AllocationValue)
-    int Admin = ViewBag.Admin;
-    @Html.Hidden("Admin", Admin)
+    int AdminId = ViewBag.AdminId;
+    @Html.Hidden("AdminId", AdminId)
     <input type="submit" name="SendSelected" value="Send" />
     <input type="submit" name="SendAll" value="Send All" />
 }

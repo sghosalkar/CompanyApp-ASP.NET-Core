@@ -136,50 +136,5 @@ namespace CompanyApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult Admin(int? Id)
-        {
-            if (Id == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            ViewBag.Admin = Id;
-            var model = new EmployeeSelectionViewModel
-            {
-                Employees = employeeRepository.GetAll().Select(x => new SelectEmployeeViewModel() { Id = x.Id, Name = x.Name }).ToList()
-            };
-            return View(model);
-            //return View();
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult SendSelected([Bind("Employees, AllocationValue")] EmployeeSelectionViewModel model, int Admin)
-        {
-            //log.Debug(ModelState.IsValid.ToString());
-            var selectedIds = model.Employees.Where(m => m.IsSelected).Select(m => m.Id);
-            log.Debug(selectedIds.ElementAt(0));
-            var points =
-                employeeRepository.GetAll()
-                .Where(e => selectedIds.Contains(e.Id));
-                //.Select(e => 
-                //new Point
-                //{
-                //    Employee = e, Value = model.AllocationValue,
-                //    IsAward = false, Timestamp = DateTime.Now,
-                //    ReceivedFrom = employeeRepository.GetById(Admin)});
-            //points.ToList().ForEach(p => pointRepository.Add(p));
-            log.Debug(points.Count());
-            //pointRepository.Save();
-            log.Debug("Done");
-            return RedirectToAction(nameof(Admin));
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult SendAll(EmployeeSelectionViewModel model)
-        {
-            return RedirectToAction(nameof(Admin));
-        }
     }
 }

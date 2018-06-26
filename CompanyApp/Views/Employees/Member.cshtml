@@ -39,7 +39,7 @@
 
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Admin" asp-route-id="@Model.Id">Go to Admin Page</a>
+        <a asp-controller="Admins" asp-action="Index" asp-route-id="@Model.Id">Go to Admin Page</a>
     }
 
 </div>
