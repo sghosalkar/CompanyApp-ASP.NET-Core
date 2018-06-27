@@ -20,10 +20,10 @@ namespace CompanyApp.Controllers
             this.roleRepository = roleRepository;
         }
 
-        public IActionResult Index()
+        public IEnumerable<IdentityRole> Index()
         {
             List<IdentityRole> roles = roleRepository.GetAll().ToList();
-            return View(roles);
+            return roles;
         }
 
         public IActionResult Create()
@@ -32,10 +32,9 @@ namespace CompanyApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name")] IdentityRole role)
+        public async Task Create([Bind("Name")][FromBody] IdentityRole role)
         {
             await roleRepository.AddAsync(role);
-            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(string Id)

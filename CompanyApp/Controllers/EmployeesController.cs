@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CompanyApp.Data;
 using CompanyApp.Models;
 using CompanyApp.Repositories;
+using Microsoft.AspNetCore.Cors;
 
 namespace CompanyApp.Controllers
 {
@@ -129,5 +130,23 @@ namespace CompanyApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //public string VueInsert()
+        //{
+        //    log.Debug("VueInsert GET");
+        //    return "done";
+        //}
+
+        [HttpPost]
+        public string VueInsert([FromBody] Test result)
+        {
+            log.Debug(result.Name);
+            return "done";
+        }
+
+        public class Test
+        {
+            public string Name { get; set; }
+        }
     }
+    
 }

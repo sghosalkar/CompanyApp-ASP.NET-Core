@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CompanyApp.Models;
 using CompanyApp.Repositories;
+using Newtonsoft.Json;
 
 namespace CompanyApp.Controllers
 {
@@ -21,10 +22,12 @@ namespace CompanyApp.Controllers
             this.employeeRepository = employeeRepository;
         }
 
-        public IActionResult Index()
+        public string Index()
         {
             List<Department> Departments = departmentRepository.GetAll().ToList();
-            return View(Departments);
+            string json = JsonConvert.SerializeObject(Departments);
+            //log.Debug(json);
+            return json;
         }
 
         public IActionResult Create()
@@ -33,15 +36,15 @@ namespace CompanyApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([Bind("Name")] Department department)
+        public bool Create([Bind("Name")][FromBody] Department department)
         {
             if (ModelState.IsValid)
             {
                 departmentRepository.Add(department);
                 departmentRepository.Save();
-                return RedirectToAction(nameof(Index));
+                return true;
             }
-            return View(department);
+            return false;
         }
 
         public IActionResult Details(int? Id)

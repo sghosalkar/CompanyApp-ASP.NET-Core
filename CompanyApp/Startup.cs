@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using CompanyApp.Repositories;
 using Microsoft.AspNetCore.Identity;
 using CompanyApp.Models;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 
@@ -49,6 +50,17 @@ namespace CompanyApp
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
             });
+
+            services.AddCors(options => 
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            //services.AddOptions();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +79,8 @@ namespace CompanyApp
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseCors("CorsPolicy");
 
             app.UseMvc(routes =>
             {
