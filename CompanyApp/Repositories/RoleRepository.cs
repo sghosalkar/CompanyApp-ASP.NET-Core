@@ -38,25 +38,28 @@ namespace CompanyApp.Repositories
             return role;
         }
 
-        public async Task AddAsync(IdentityRole role)
+        public async Task<bool> AddAsync(IdentityRole role)
         {
             var roleExist = await roleManager.RoleExistsAsync(role.Name);
             if (!roleExist)
             {
                 var result = await roleManager.CreateAsync(role);
                 log.Debug("Role created");
+                return true;
             }
+            return false;
         }
 
-        public async Task RemoveAsync(string Id)
+        public async Task<bool> RemoveAsync(string Id)
         {
             IdentityRole role = await roleManager.FindByIdAsync(Id);
             var res = await userManager.GetUsersInRoleAsync(role.Name);
             if(res.Count > 0)
             {
-                return;
+                return false;
             }
             var result = await roleManager.DeleteAsync(role);
+            return true;
         }
         
     }

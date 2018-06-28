@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CompanyApp.Models;
 using CompanyApp.Repositories;
+using CompanyApp.Data;
 using Newtonsoft.Json;
 
 namespace CompanyApp.Controllers
@@ -22,15 +23,15 @@ namespace CompanyApp.Controllers
             this.employeeRepository = employeeRepository;
         }
 
-        public string Index()
+        public string GetAll()
         {
             List<Department> Departments = departmentRepository.GetAll().ToList();
-            string json = JsonConvert.SerializeObject(Departments);
-            //log.Debug(json);
+            string json = Serialization.Serialize(Departments);
+            log.Debug(json);
             return json;
         }
 
-        public IActionResult Create()
+        public IActionResult Index()
         {
             return View();
         }
@@ -47,16 +48,28 @@ namespace CompanyApp.Controllers
             return false;
         }
 
-        public IActionResult Details(int? Id)
+        [HttpGet]
+        public string Details(int? Id)
         {
-            if (Id == null)
+            if (Id != null)
             {
-                return RedirectToAction(nameof(Index));
+                Department department = departmentRepository.GetById(Id);
+                department.Employee = employeeRepository.GetByDepartmentId(Id).ToList();
+                string json = Serialization.Serialize(department);
+                return json;
             }
-            Department department = departmentRepository.GetById(Id);
-            department.Employee = employeeRepository.GetByDepartmentId(Id).ToList();
+            return null;
+        }
 
-            return View(department);
+        [HttpDelete]
+        public void Delete(int? Id)
+        {
+            if (Id != null)
+            {
+                Department department = departmentRepository.GetById(Id);
+                departmentRepository.Remove(department);
+                departmentRepository.Save();
+            }
         }
     }
 }

@@ -1,6 +1,10 @@
 {
   "presets": [
-    ["env", { "modules": false }],
+    [
+      "env",
+      { "modules": false }
+    ],
     "stage-3"
-  ]
+  ],
+  "plugins": [ "transform-regenerator" ]
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using CompanyApp.DTO;
 using CompanyApp.Models;
 using CompanyApp.Repositories;
+using CompanyApp.Data;
 
 namespace CompanyApp.Controllers
 {
@@ -22,45 +23,48 @@ namespace CompanyApp.Controllers
             this.employeeRepository = employeeRepository;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public string GetAll()
         {
             List<Project> Projects = projectRepository.GetAll().ToList();
-            return View(Projects);
+            string json = Serialization.Serialize(Projects);
+            return json;
         }
 
-        public IActionResult Create()
+        public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create([Bind("Name")] Project project)
+        public bool Create([Bind("Name")][FromBody] Project project)
         {
             if (ModelState.IsValid)
             {
                 projectRepository.Add(project);
                 projectRepository.Save();
-                return RedirectToAction(nameof(Index));
+                return true;
             }
             log.Debug("Invalid state");
-            return View(project);
+            return false;
         }
 
-        public IActionResult Details(int? Id)
+        [HttpGet]
+        public string Details(int? Id)
         {
-            if (Id == null)
+            if (Id != null)
             {
-                return RedirectToAction(nameof(Index));
+                Project project = projectRepository.GetById(Id);
+                IEnumerable<Employee> projectEmployees = project.ProjectEmployee.Select(e => e.Employee);
+                IEnumerable<Employee> otherEmployees = employeeRepository.GetAll().Except(projectEmployees);
+                string json = Serialization.Serialize(new { project, projectEmployees, otherEmployees });
+                return json;
             }
-            Project project = projectRepository.GetById(Id);
-            IEnumerable<Employee> projectEmployees = project.ProjectEmployee.Select(e => e.Employee);
-            IEnumerable<Employee> otherEmployees = employeeRepository.GetAll().Except(projectEmployees);
-            ViewBag.otherEmployees = otherEmployees;
-            return View(project);
+            return null;
         }
 
         [HttpPost]
-        public IActionResult AddEmployeeToProject(int employeeId, int Id)
+        public void AddEmployeeToProject([FromBody]int employeeId,[FromBody] int Id)
         {
             EmployeeProjectDto employeeProjectDto = new EmployeeProjectDto
             {
@@ -69,11 +73,10 @@ namespace CompanyApp.Controllers
             };
             projectRepository.AddEmployeeToProject(employeeProjectDto);
             projectRepository.Save();
-            return RedirectToAction(nameof(Details));
         }
 
         [HttpPost]
-        public IActionResult RemoveEmployeeFromProject(int employeeId, int Id)
+        public void RemoveEmployeeFromProject([FromBody]int employeeId, [FromBody]int Id)
         {
             EmployeeProjectDto employeeProjectDto = new EmployeeProjectDto
             {
@@ -82,7 +85,6 @@ namespace CompanyApp.Controllers
             };
             projectRepository.RemoveEmployeeFromProject(employeeProjectDto);
             projectRepository.Save();
-            return RedirectToAction(nameof(Details));
         }
 
     }

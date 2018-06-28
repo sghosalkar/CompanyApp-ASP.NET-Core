@@ -29,7 +29,7 @@ namespace CompanyApp.Repositories
 
         public IEnumerable<Employee> GetAll()
         {
-            return context.Employee.ToList();
+            return context.Employee.Include(e => e.Department).Include(e => e.EmployeeProject).ToList();
         }
 
         public Employee GetById(int? Id)

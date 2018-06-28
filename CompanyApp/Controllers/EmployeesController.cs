@@ -37,24 +37,28 @@ namespace CompanyApp.Controllers
 
         }
 
-        public async Task<IActionResult> SignIn([Bind("Id, Password")] User user)
+        [HttpPost]
+        public async Task<string> SignIn([Bind("Id, Password")][FromBody] User user)
         {
+            string response = null;
             if (ModelState.IsValid)
             {
                 var result = employeeRepository.GetById(user.Id);
                 if (result == null)
                 {
-                    TempData["errorMessage"] = "User ID doesn't exist";
-                    return RedirectToAction(nameof(Index));
+                    response = "User ID doesn't exist"; ;
                 }
-                if (result.Password.Equals(Security.HashSHA1(user.Password)))
+                else if (result.Password.Equals(Security.HashSHA1(user.Password)))
                 {
                     await employeeRepository.SignIn(result);
-                    return RedirectToAction(nameof(Member), new { result.Id }); 
+                    response = "success";
                 }
-                TempData["errorMessage"] = "Incorrect Password";
+                else
+                {
+                    response = "Incorrect Password";
+                }
             }
-            return RedirectToAction(nameof(Index));
+            return Serialization.Serialize(response);
         }
         
         public IActionResult Member(int? Id)
@@ -67,11 +71,12 @@ namespace CompanyApp.Controllers
             return View(employee);
         }
 
-        public IActionResult List()
+        [HttpGet]
+        public string GetAll()
         {
             List<Employee> employees = employeeRepository.GetAll().ToList();
-            return View(employees);
-
+            string json = Serialization.Serialize(employees);
+            return json;
         }
 
         public IActionResult Create()
@@ -86,7 +91,7 @@ namespace CompanyApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, Department, Role, Password, ConfirmPassword")] Employee employee)
+        public async Task<bool> Create([Bind("Name, Department, Role, Password, ConfirmPassword")][FromBody] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -94,34 +99,46 @@ namespace CompanyApp.Controllers
                 employee.Department = department;
                 await employeeRepository.Add(employee);
                 employeeRepository.Save();
-                return RedirectToAction(nameof(Index));
+                return true;
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList();
+                foreach(var error in errors)
+                {
+                    log.Debug(error.Select(x => x.ErrorMessage) + " " + error.Select(x => x.Exception));
+                }
+                log.Debug(errors);
             }
             log.Debug("Invalid state");
-            return View(employee);
+            return false;
         }
 
-        public IActionResult Details(int? Id)
+        [HttpGet]
+        public string Details(int? Id)
         {
-            if (Id == null)
+            if (Id != null)
             {
-                return RedirectToAction(nameof(Index));
+                Employee employee = employeeRepository.GetById(Id);
+                employee.EmployeeProject = employeeRepository.GetProjectsById(Id).ToList()
+                    .Select(p => new EmployeeProject { Project = p, ProjectId = p.Id, Employee = employee, EmployeeId = employee.Id }).ToList();
+                string json = Serialization.Serialize(employee);
+                return json;
             }
-            Employee employee = employeeRepository.GetById(Id);
-            employee.EmployeeProject = employeeRepository.GetProjectsById(Id).ToList()
-                .Select(p => new EmployeeProject { Project = p, ProjectId = p.Id, Employee = employee, EmployeeId = employee.Id }).ToList();
-            return View(employee);
+            return null;
         }
 
-        public async Task<IActionResult> Delete(int? Id)
+        [HttpGet]
+        public async Task<bool> Delete(int? Id)
         {
-            if (Id == null)
+            if (Id != null)
             {
-                return RedirectToAction(nameof(Index));
+                Employee employee = employeeRepository.GetById(Id);
+                await employeeRepository.Remove(employee);
+                employeeRepository.Save();
+                return true;
             }
-            Employee employee = employeeRepository.GetById(Id);
-            await employeeRepository.Remove(employee);
-            employeeRepository.Save();
-            return RedirectToAction(nameof(Index));
+            return false;
         }
 
         public async Task<IActionResult> Logout()
@@ -135,13 +152,6 @@ namespace CompanyApp.Controllers
         //    log.Debug("VueInsert GET");
         //    return "done";
         //}
-
-        [HttpPost]
-        public string VueInsert([FromBody] Test result)
-        {
-            log.Debug(result.Name);
-            return "done";
-        }
 
         public class Test
         {

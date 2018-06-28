@@ -2,7 +2,7 @@
   <div>
     <ul>
       <li v-for="role in roles">
-        {{ role.name }}
+        {{ role.Name }}
       </li>
     </ul>
   </div>
@@ -20,7 +20,7 @@
     },
     methods: {
       getRoles() {
-        axios.get('http://localhost:50011/Roles/')
+        axios.get('http://localhost:50011/Roles/GetAll')
           .then((response) => {
             this.roles = response.data;
             console.log(response.data)

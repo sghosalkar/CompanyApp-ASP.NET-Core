@@ -1,5 +1,6 @@
 ﻿using CompanyApp.Data;
 using CompanyApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace CompanyApp.Repositories
 
         public IEnumerable<Department> GetAll()
         {
-            return context.Department.ToList();
+            return context.Department.Include(d => d.Employee).ToList();
         }
 
         public Department GetById(int? Id)
@@ -36,9 +37,17 @@ namespace CompanyApp.Repositories
             context.Department.Remove(Department);
         }
 
-        public void Save()
+        public string Save()
         {
-            context.SaveChanges();
+            try
+            {
+                context.SaveChanges();
+                return "Success";
+            }
+            catch(Exception e)
+            {
+                return e.GetType().Name + e.Message;
+            }
         }
     }
 }

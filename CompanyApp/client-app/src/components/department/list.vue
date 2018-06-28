@@ -12,6 +12,7 @@
   export default {
     data() {
       return {
+        entity: null,
         departments: null,
       };
     },
@@ -19,18 +20,14 @@
       'app-info-department': InfoDepartment,
     },
     methods: {
-      getDepartments() {
-        axios.get('http://localhost:50011/Departments/')
-          .then((response) => {
-            this.departments = response.data;
-            console.log(response.data)
-          })
-          .catch(
-            (error) => console.log(error)
-          );
+      async getDepartments() {
+        const getAll = this.$store.state.data.getAll;
+        this.departments = await getAll(this.entity);
+        console.log(this.departments);
       }
     },
-    created() {
+    mounted() {
+      this.entity = this.$store.state.data.Departments;
       this.getDepartments();
     },
   }

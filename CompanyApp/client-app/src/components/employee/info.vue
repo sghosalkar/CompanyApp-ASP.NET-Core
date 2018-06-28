@@ -1,14 +1,10 @@
 <template>
   <div class="panel panel-primary">
     <div class="panel-heading">
-      {{ department.Id }} - {{ department.Name }}
+      {{ employee.Id }} - {{ employee.Name }}
     </div>
     <div class="panel-body" v-if="showInfo">
-      <ul>
-        <li v-for="employee in department.Employee">
-          {{ employee.Name }}
-        </li>
-      </ul>
+      {{ employee.Department.Name }}
       <a @click="onHideInfo">Hide</a>
     </div>
     <div class="panel-footer" v-if="!showInfo">
@@ -24,10 +20,9 @@
   import axios from 'axios';
 
   export default {
-    props: ['department'],
+    props: ['employee'],
     data() {
       return {
-        entity: null,
         showInfo: false,
       }
     },
@@ -39,18 +34,27 @@
         this.showInfo = false;
       },
       getInfo() {
-        var params = { params: { Id: this.department.Id } }
-        const info = this.$store.state.data.getById;
-        department.Employee = getById(this.entity, params);
+        axios.get('http://localhost:50011/Employees/Details', { params: { Id: this.employee.Id } })
+          .then((response) => {
+            console.log(response.data)
+            this.employee = response.data;
+          })
+          .catch(
+            (error) => console.log(error)
+          );
       },
       onDelete() {
-        var params = { params: { Id: this.department.Id } }
-        const remove = this.$store.state.data.remove;
-        remove(this.entity, params);
+        axios.delete('http://localhost:50011/Employees/Delete', { params: { Id: this.employee.Id } })
+          .then((response) => {
+            console.log(response.data)
+          })
+          .catch(
+            (error) => console.log(error)
+          );
       }
     },
     created() {
-      this.entity = this.$store.state.data.Departments;
+      //this.getInfo();
     },
   }
 </script>
@@ -58,5 +62,7 @@
 <style scoped>
   a {
     cursor: pointer;
+    text-decoration-color:blue;
+    text-decoration: underline;
   }
 </style>

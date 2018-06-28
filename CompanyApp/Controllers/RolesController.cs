@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using CompanyApp.Repositories;
+using CompanyApp.Data;
 
 namespace CompanyApp.Controllers
 {
@@ -20,27 +21,30 @@ namespace CompanyApp.Controllers
             this.roleRepository = roleRepository;
         }
 
-        public IEnumerable<IdentityRole> Index()
+        [HttpGet]
+        public string GetAll()
         {
             List<IdentityRole> roles = roleRepository.GetAll().ToList();
-            return roles;
+            string Json = Serialization.Serialize(roles);
+            return Json;
         }
 
-        public IActionResult Create()
+        public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task Create([Bind("Name")][FromBody] IdentityRole role)
+        public async Task<bool> Create([Bind("Name")][FromBody] IdentityRole role)
         {
-            await roleRepository.AddAsync(role);
+            return await roleRepository.AddAsync(role);
         }
 
-        public async Task<IActionResult> Delete(string Id)
+        [HttpDelete]
+        public async Task<bool> Delete(string Id)
         {
-            await roleRepository.RemoveAsync(Id);
-            return RedirectToAction(nameof(Index));
+            return await roleRepository.RemoveAsync(Id);
+            
         }
     }
 }

@@ -18,7 +18,8 @@
     components: {
       'app-new-department': NewDepartment,
       'app-list-department': ListDepartment
-    }
+    },
+    
   }
 
 </script>
